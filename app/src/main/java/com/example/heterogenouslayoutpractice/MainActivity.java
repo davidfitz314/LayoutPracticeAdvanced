@@ -7,11 +7,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
@@ -28,13 +31,50 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i<5; i++){
             String title = ""+i;
             mObjects.add(title);
-            Things thing = new Things(""+i, "0.00", "02/01/2019");
+
+        }
+
+        for (int i = 25; i >= 0; i--){
+            int j = i%5;
+            Things thing = new Things(""+j, "0.00"+i, "02/01/2019");
             mObjects.add(thing);
         }
 
         //for (int i = 0; i<5; i++){
 
         //}
+        //attempting to override collections sort method
+
+        Collections.sort(mObjects, new Comparator<Object>() {
+            @Override
+            public int compare(Object a, Object b){
+                if (a instanceof String && b instanceof Things){
+                    //compare string title with thing object
+                    String name = ((Things) b).getmName();
+                    String title = ((String) a);
+                    return name.compareTo(title);
+                } else if (b instanceof String && a instanceof Things){
+                    //compare string title with thing object
+                    String name = ((Things) a).getmName();
+                    String title = ((String) b);
+                    return name.compareTo(title);
+                } else if (a instanceof Things && b instanceof Things){
+                    //compare two same objects from things class
+                    int compared = ((Things) a).getmName().compareTo(((Things) b).getmName());
+                    //if two strings are equal use a sub category for compare
+                    if (compared == 0){
+                        String totalA = ((Things) a).getmCost();
+                        String totalB = ((Things) b).getmCost();
+                        return totalA.compareTo(totalB);
+                    }
+                    return compared;
+                } else if (a instanceof String && b instanceof String){
+                    //compare two string titles
+                    return ((String) a).compareTo((String) b);
+                }
+                return 0;
+            }
+        });
 
 
 
